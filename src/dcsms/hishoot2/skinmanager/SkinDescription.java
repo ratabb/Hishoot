@@ -10,11 +10,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import org.xmlpull.v1.XmlPullParserException;
-
-import android.content.Context;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.AssetManager;
 
 public class SkinDescription {
 	String result = null;
@@ -32,7 +27,8 @@ public class SkinDescription {
 		return author;
 
 	}
-	public int getDensType(){
+
+	public int getDensType() {
 		return densType;
 	}
 
@@ -119,18 +115,14 @@ public class SkinDescription {
 
 					}
 
-					// result = title + "\n" + author + "\n" + ver + "\n"+
-					// Integer.toString(x)+ "\n"+Integer.toString(y)
-					// + "\n"+Integer.toString(tinggi)+
-					// "\n"+Integer.toString(lebar);
-					// Log.w("DESC", result);
+//					result = "Device:" + device + " Author: " + author
+//							+ " DensType:" + densType;
+//					Log.d("DESC", result);
 				}
 			}
 
 		}
 
 	}
-
-	
 
 }

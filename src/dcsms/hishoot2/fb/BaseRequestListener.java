@@ -14,6 +14,7 @@ import com.facebook.android.AsyncFacebookRunner.RequestListener;
  * handling. Applications should handle these error conditions.
  *
  */
+@SuppressWarnings("deprecation")
 public abstract class BaseRequestListener implements RequestListener {
 
     public void onFacebookError(FacebookError e, final Object state) {

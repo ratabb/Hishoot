@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="Instantiatable" severity="ignore" />
+    <issue id="MissingTranslation">
+        <ignore path="res/values/strings.xml" />
+    </issue>
+    <issue id="ValidFragment">
+        <ignore path="src/dcsms/hishoot2b/fragment/PreviewSkin.java" />
+    </issue>
+</lint>

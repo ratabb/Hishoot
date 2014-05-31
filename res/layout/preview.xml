@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rootView" >
+    android:background="@drawable/img_default" >
 
     <ImageView
         android:id="@+id/preview_image"
@@ -12,12 +13,39 @@
         android:adjustViewBounds="true"
         android:src="@drawable/img_default" />
 
+    <LinearLayout
+        android:id="@+id/lButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:weightSum="2" >
+
+        <Button
+            android:id="@+id/bCancel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/btn_cancel" />
+
+        <Button
+            android:id="@+id/bApply"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/btn_apply" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/description"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:text="TextView" />
+        android:layout_alignParentTop="true"
+        android:layout_margin="4dp"
+        android:background="@color/half_grey"
+        android:padding="8dp"
+        android:text="TextView"
+        android:textColor="@color/dcsms_hishoot__text_color" />
 
 </RelativeLayout>

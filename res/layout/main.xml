@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rootView"
     android:background="@drawable/background" >
 
     <LinearLayout
@@ -15,7 +15,7 @@
             android:id="@+id/iv_preview"
             android:layout_width="fill_parent"
             android:layout_height="300dip"
-            android:adjustViewBounds="true"/>
+            android:adjustViewBounds="true" />
     </LinearLayout>
 
     <LinearLayout
@@ -57,17 +57,13 @@
             android:text="@string/save" />
     </LinearLayout>
 
-
-        <ImageView
-            android:layout_centerHorizontal="true"
-            android:id="@+id/loading"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:adjustViewBounds="true"
-            android:layout_alignParentRight="true"
-            android:src="@anim/animasi" />
-
-        
-
+    <ImageView
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerHorizontal="true"
+        android:adjustViewBounds="true"
+        android:src="@anim/animasi" />
 
 </RelativeLayout>

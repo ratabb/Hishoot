@@ -5,10 +5,9 @@ import android.widget.Toast;
 
 public class ToastAlert {
 	public ToastAlert(Context context, String message, Boolean toastlong) {
-		if (toastlong)
-			Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-		else
-			Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
+		Toast.makeText(context, message,
+				(toastlong) ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT).show();
 
 	}
 }

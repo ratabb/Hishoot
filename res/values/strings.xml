@@ -10,8 +10,18 @@
     <string name="wallpaper">Wallpaper</string>
     <string name="save">Save</string>
     <string name="chooser">Choose image for %s</string>
+    <string name="menu_about">About</string>
+    <string name="menu_template">Template</string>
     <string name="about">write by :\n\t\tjmkl\n\t\tjimikill3d@gmail.com\n\nAndroid Ranah Minang Dev. Team\nhttp://androidminang.com\n</string>
-    
-    
+    <string name="title_about">About</string>
+    <string name="title_app">HiShoot2</string>
+    <string name="title_skin">Choose ur Template</string>
+    <string name="title_share">Share It!!!</string>
+    <string name="subtitle_about"> </string>
+    <string name="subtitle_app">Hs for home screen, Hs for HiShoot</string>
+    <string name="subtitle_skin">choose then apply</string>
+    <string name="subtitle_share">Connect with facebook</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_apply">Apply</string>
 
 </resources>

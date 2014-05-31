@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 
 public class Save {
+	@SuppressWarnings("unused")
 	private Context con;
 
 	public Save(Context c) {
@@ -18,37 +19,27 @@ public class Save {
 	}
 
 	public File SaveBitmap(Bitmap bm) {
-		String sdcard = Environment.getExternalStorageDirectory()
-				+ "/HiShoot/";
+		String sdcard = Environment.getExternalStorageDirectory() + "/HiShoot/";
 		String namafile = String.valueOf("HiShoot-"
 				+ System.currentTimeMillis())
 				+ ".png";
 		OutputStream outStream = null;
 		File f = new File(sdcard);
-		if(!f.exists()){
+		if (!f.exists()) {
 			f.mkdirs();
 		}
 		File file = new File(sdcard, namafile);
-
 		try {
 
 			outStream = new FileOutputStream(file);
 			bm.compress(Bitmap.CompressFormat.PNG, 100, outStream);
 			outStream.flush();
 			outStream.close();
-			//new ToastAlert(con, "Save", true);
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			//new ToastAlert(con, e.toString(), true);
-
 		} catch (IOException e) {
 			e.printStackTrace();
-			//new ToastAlert(con, e.toString(), true);
-
 		}
 		return file;
-
 	}
-
 }
