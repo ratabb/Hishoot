@@ -1,20 +1,19 @@
 Hishoot -Illegal- 
 =================
 
-fork from Hishoot2 [1](Apk @GooglePlay [2])
-
+from [Hishoot2](https://github.com/jmkl/Hishoot) 
+<p>
+<a href="https://play.google.com/store/apps/details?id=dcsms.hishoot2">
+  <img alt="Android app on Google Play"
+       src="https://developer.android.com/images/brand/en_app_rgb_wo_45.png" />
+</a>
+<p>
 Dependencies
 -------------
-	- FacebookSDK [3]
-	- ActionBarCompat [4] _____________________ ActionBarSherlock[5]
-	- SlidingMenu [6]
-	- Android CropImage [7]
+	- [FacebookSDK](https://developers.facebook.com/android)
+	- [ActionBarCompat] (https://developer.android.com/tools/support-library/index.html)
+	- [SlidingMenu] (https://github.com/jfeinstein10/slidingmenu)
+	- [Android CropImage](https://github.com/lvillani/android-cropimage)
 	
 
-[1] https://github.com/jmkl/Hishoot
-[2] https://play.google.com/store/apps/details?id=dcsms.hishoot2
-[3] https://developers.facebook.com/android
-[4] https://developer.android.com/tools/support-library/index.html
-[5] https://actionbarsherlock.com
-[6] https://github.com/jfeinstein10/slidingmenu
-[7] https://github.com/lvillani/android-cropimage
+

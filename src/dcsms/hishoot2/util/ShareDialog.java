@@ -10,16 +10,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,10 +26,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
+
 import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
@@ -47,7 +44,7 @@ import dcsms.hishoot2.fb.GrupAraiadapter;
 import dcsms.hishoot2.fb.KomenDialog;
 import dcsms.hishoot2.fb.KomenDialog.Listener;
 
-public class ShareDialog extends SherlockActivity implements OnClickListener {
+public class ShareDialog extends ActionBarActivity implements OnClickListener {
 	private final ArrayList<Grup> Group = new ArrayList<Grup>();
 	private static final List<String> PERMISSIONS = Arrays.asList(
 			"publish_actions", "publish_stream", "read_stream", "user_groups");
@@ -98,7 +95,7 @@ public class ShareDialog extends SherlockActivity implements OnClickListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		setTheme(R.style.Theme_Sherlock);
+		setTheme(R.style.AppTheme);
 		super.onCreate(savedInstanceState);
 		uiHelper = new UiLifecycleHelper(this, callback);
 		uiHelper.onCreate(savedInstanceState);

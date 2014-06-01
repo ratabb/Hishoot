@@ -33,14 +33,18 @@ import android.widget.ImageView;
 import dcsms.hishoot2.MainActivity;
 import dcsms.hishoot2.R;
 import dcsms.hishoot2.skinmanager.GetResources;
+
 import dcsms.hishoot2.skinmanager.SkinDescription;
 import dcsms.hishoot2.util.DrawView;
 import dcsms.hishoot2.util.HiPref;
 import dcsms.hishoot2.util.Save;
+import dcsms.hishoot2.util.ShareDialog;
 
 import com.android.camera.CropImageIntentBuilder;
 
 public class Hello extends Fragment implements OnClickListener {
+	protected static final boolean DEBUG = false;
+	protected final String TAG = getClass().getSimpleName();
 	private Activity mActivity;
 	private Context mContext;
 	private View mRoot;
@@ -71,7 +75,7 @@ public class Hello extends Fragment implements OnClickListener {
 		super.onCreate(savedInstanceState);
 
 		mActivity = (MainActivity) getActivity();
-		mContext = mActivity;
+		mContext = getActivity();
 		wallcrop = Uri.fromFile(new File(mContext.getExternalCacheDir(),
 				"wallcrop.jpg"));
 		deleteCache(wallcrop);
@@ -267,16 +271,15 @@ public class Hello extends Fragment implements OnClickListener {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				desc = new SkinDescription();
-				if (is != null) {
 
-					desc.getKeterangan(is);
+				if (is != null) {
+					desc = new SkinDescription(mContext, is);
 				}
 				int tx, ty, bx, by;
-				tx = desc.getTX();
-				ty = desc.getTY();
-				bx = desc.getBX();
-				by = desc.getBY();
+				tx = desc.getTx();
+				ty = desc.getTy();
+				bx = desc.getBx();
+				by = desc.getBy();
 
 				TL = (tx > 0) ? tx : 1;
 				TT = (ty > 0) ? ty : 1;
@@ -292,8 +295,6 @@ public class Hello extends Fragment implements OnClickListener {
 						tinggi + toty, true);
 
 			} else {
-				// LOG(its(totx));
-				// LOG(its(toty));
 
 				frame = DrawView.getNine(0, 0, R.drawable.frame1, lebar + totx,
 						tinggi + toty, mContext, opts);
@@ -347,7 +348,7 @@ public class Hello extends Fragment implements OnClickListener {
 		}
 	}
 
-	// TODO:  'tanda air'
+	// TODO: 'tanda air'
 	private Paint paint(String s) {
 		Paint p = new Paint();
 		p.setTextAlign(Paint.Align.RIGHT);
@@ -373,11 +374,17 @@ public class Hello extends Fragment implements OnClickListener {
 				dialog.setMessage("SaveComplete");
 				dialog.dismiss();
 				String s = result.getPath();
-				Log.d(getClass().getName(), s);
+				if (DEBUG)
+					Log.d(TAG, s);
 				deleteCache(wallcrop);
-				ShareDialog sf = new ShareDialog();
-				sf.setData(s);
-				mSwitch.onSwitchContent(sf);
+				//TODO
+//				ShareDialogDumb sf = new ShareDialogDumb();
+//				sf.setData(s);
+//				mSwitch.onSwitchContent(sf);
+				Intent i = new Intent();
+				i.putExtra("File", s);
+				i.setClass(mContext, ShareDialog.class);
+				startActivity(i);
 			} else {
 				dialog.setMessage("Failed");
 				dialog.dismiss();
@@ -412,13 +419,6 @@ public class Hello extends Fragment implements OnClickListener {
 
 	}
 
-	// private String its(Integer i) {
-	// return Integer.toString(i);
-	// }
-	//
-	// private void LOG(String msg) {
-	// Log.d("OOM", msg);
-	// }
 
 	@Override
 	public void onClick(View v) {

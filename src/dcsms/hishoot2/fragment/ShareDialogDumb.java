@@ -48,18 +48,18 @@ import dcsms.hishoot2.fb.KomenDialog;
 import dcsms.hishoot2.fb.KomenDialog.Listener;
 import dcsms.hishoot2.util.ToastAlert;
 
-public class ShareDialog extends Fragment implements OnClickListener {
+public class ShareDialogDumb extends Fragment implements OnClickListener {
 	private final ArrayList<Grup> Group = new ArrayList<Grup>();
 	private static final List<String> PERMISSIONS = Arrays.asList(
 			"publish_actions", "publish_stream", "read_stream", "user_groups");
 	private boolean pendingPublishReauthorization = false;
 	private GrupAraiadapter adapter;
 
-	private String TAG = getClass().getSimpleName();
+	protected final String TAG = getClass().getSimpleName();
 	private Button fb, show, share;
 	private ImageView iv;
 	private ListView lv;
-	private String dirfile;
+	private static String dirfile;
 	private Button lb;
 	Bitmap ok;
 	Grup a;
@@ -70,9 +70,10 @@ public class ShareDialog extends Fragment implements OnClickListener {
 	Context c;
 	private Activity mActivity;
 	private Switcher mSwitch;
-	
+
 	public void setData(String _file) {
 		dirfile = _file;
+
 	}
 
 	@Override
@@ -306,8 +307,6 @@ public class ShareDialog extends Fragment implements OnClickListener {
 
 	}
 
-
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -315,9 +314,9 @@ public class ShareDialog extends Fragment implements OnClickListener {
 		mActivity = (MainActivity) getActivity();
 		c = mActivity;
 		mSwitch = (Switcher) mActivity;
-		mSwitch.onCustomActionBar(false,
-				R.string.title_share, R.string.subtitle_share);
-		
+		mSwitch.onCustomActionBar(false, R.string.title_share,
+				R.string.subtitle_share);
+
 		uiHelper = new UiLifecycleHelper(getActivity(), callback);
 		uiHelper.onCreate(savedInstanceState);
 
@@ -373,10 +372,10 @@ public class ShareDialog extends Fragment implements OnClickListener {
 			pendingPublishReauthorization = false;
 		}
 		if (state.isOpened()) {
-			Log.i(TAG, "Logged in...");
+			Log.e(TAG, "Logged in...");
 			lb.setVisibility(View.GONE);
 		} else if (state.isClosed()) {
-			Log.i(TAG, "Logged out...");
+			Log.e(TAG, "Logged out...");
 			lb.setVisibility(View.VISIBLE);
 		}
 	}
@@ -393,27 +392,21 @@ public class ShareDialog extends Fragment implements OnClickListener {
 		if (session != null && (session.isOpened() || session.isClosed())) {
 			switch (v.getId()) {
 			case R.id.share_fb:
-
 				final KomenDialog k = new KomenDialog(c);
 				k.setListener(new Listener() {
-
 					@Override
 					public void onOK(String string) {
-
 						Bundle p = new Bundle();
 						p.putString("message", string);
 						p.putParcelable("picture", ok);
 						publishStory(p, "WALL", null);
-
 					}
 
 					@Override
 					public void onCancel() {
-
 					}
 				});
 				k.show();
-
 				break;
 			case R.id.share_show:
 				Bundle p2 = new Bundle();
