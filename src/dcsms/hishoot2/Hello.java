@@ -8,18 +8,22 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import dcsms.hishoot2.fragment.Hello;
+import dcsms.hishoot2.fragment.HelloFragment;
 import dcsms.hishoot2.fragment.MenuSliding;
 import dcsms.hishoot2.fragment.Switcher;
 
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
-public class MainActivity extends ActionBarActivity implements Switcher {
+public class Hello extends ActionBarActivity implements Switcher {
 	private SlidingMenu mSlidingMenu;
 	private boolean isLoading, isMain;
 	private ActionBar mActionBar;
+	static {
+		System.loadLibrary("photoprocessing");
+	}
 
+	public native String dafuq();
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -94,8 +98,8 @@ public class MainActivity extends ActionBarActivity implements Switcher {
 				.replace(id, (Fragment) obj).commit();
 	}
 
-	public final Hello MAIN() {
-		return new Hello();
+	public final HelloFragment MAIN() {
+		return new HelloFragment();
 	}
 
 	/** public methods override/implement interface Switcher */

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -14,12 +12,13 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import dcsms.hishoot2.MainActivity;
+import dcsms.hishoot2.Hello;
 import dcsms.hishoot2.R;
 import dcsms.hishoot2.fragment.PreviewSkin.PreviewListener;
 import dcsms.hishoot2.skinmanager.SkinAdapter;
@@ -31,12 +30,10 @@ import dcsms.hishoot2.util.HiPref;
 import dcsms.hishoot2.util.ToastAlert;
 
 public class SkinChooser extends ListFragment {
-	private Activity mActivity;
-	private Context mContext;
+
 	private HiPref pref;
 
-	private List<String> paket = new ArrayList<String>();
-	private List<Drawable> paketIcon = new ArrayList<Drawable>();
+	private ArrayList<Pair<String, Drawable>> paket = new ArrayList<Pair<String, Drawable>>();
 
 	private CekDensiti c;
 	private int mydensiti;
@@ -54,37 +51,38 @@ public class SkinChooser extends ListFragment {
 		return inflater.inflate(R.layout.list, null);
 	}
 
+	private Hello getMainActivity() {
+		return (Hello) getActivity();
+	}
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		mActivity = (MainActivity) getActivity();
-		mContext = mActivity;
-		pref = new HiPref(mContext);
-		c = new CekDensiti(mActivity);
+		pref = new HiPref(getMainActivity());
+		c = new CekDensiti(getMainActivity());
 		mydensiti = c.getDensitiType();
 
-		util = new SkinsUtil(mContext);
-		SkinAdapter adapter = new SkinAdapter(mContext);
-		mSwitch = (Switcher) mActivity;
+		util = new SkinsUtil(getMainActivity());
+		SkinAdapter adapter = new SkinAdapter(getMainActivity());
+		mSwitch = (Switcher) getMainActivity();
 		mSwitch.onCustomActionBar(false, R.string.title_skin,
 				R.string.subtitle_skin);
 
 		// TODO add default template
 		adapter.add(new SkinItem(util.DEFAULT, String.format(
 				"Device: %s\nAuthor: %s", "Default Template", "DCSMS"),
-				mContext.getResources().getDrawable(R.drawable.ic_launcher)));
+				getMainActivity().getResources().getDrawable(R.drawable.ic_launcher)));
 
-		loadSkinPackage(paket, paketIcon);
+		loadSkinPackage();
 
 		if (paket != null) {
-
 			for (int i = 0; i < paket.size(); i++) {
-				String p = paket.get(i);
+				Pair<String, Drawable> pair = paket.get(i);
+				String p = pair.first;
+				Drawable d = pair.second;
 				// TODO
-				adapter.add(new SkinItem(p, getStringSkin(p,
-						"Device: %s  (%s)\nAuthor: %s", false), paketIcon
-						.get(i)));
+				adapter.add(new SkinItem(p, getStringSkin(p, false), d));
 			}
 		}
 
@@ -92,10 +90,10 @@ public class SkinChooser extends ListFragment {
 
 	}
 
-	private void loadSkinPackage(List<String> p, List<Drawable> ic) {
-		p.clear();
-		ic.clear();
-		PackageManager pm = mContext.getPackageManager();
+	private void loadSkinPackage() {
+		paket.clear();
+
+		PackageManager pm = getMainActivity().getPackageManager();
 		Intent i = new Intent(Intent.ACTION_MAIN, null);
 		i.addCategory("dcsms.hishoot.SKINTEMPLATE");
 		List<ResolveInfo> apps = pm.queryIntentActivities(i, 0);
@@ -103,13 +101,12 @@ public class SkinChooser extends ListFragment {
 		for (ResolveInfo skin : apps) {
 			ActivityInfo ai = skin.activityInfo;
 			String pkg = ai.packageName;
-
+			Drawable icon = ai.loadIcon(pm);
 			// TODO: filtered type with deviceDpi
 			// util.getSkinInfo(pkg);
 			// if (util.getType() == mydensiti)
 
-			ic.add(ai.loadIcon(pm));
-			p.add(pkg);
+			paket.add(Pair.create(pkg, icon));
 		}
 	}
 
@@ -128,16 +125,14 @@ public class SkinChooser extends ListFragment {
 		if (isDefault) {
 			description = "Reset Default Template";
 			bitmap = DrawView.getNine(0, 0, R.drawable.frame1, c.getWid(),
-					c.getHi(), mContext, null);
+					c.getHi(), getMainActivity(), null);
 			isCompatible = true;
 			mSkinMessage = null;
 		} else {
 			isCompatible = (getBooleanSkin(mSkinPackageName));
 			mSkinMessage = (isCompatible) ? null : getStringSkin(
-					mSkinPackageName,
-					"Not compatible\nTemplate: %s\nYour device: %s", true);
-			description = getStringSkin(mSkinPackageName,
-					"Device: %s  (%s)\nAuthor: %s", false);
+					mSkinPackageName, true);
+			description = getStringSkin(mSkinPackageName, false);
 			bitmap = util.getBitmapSkin(mSkinPackageName);
 		}
 
@@ -152,11 +147,13 @@ public class SkinChooser extends ListFragment {
 		return (util.getType() == mydensiti);
 	}
 
-	private String getStringSkin(String pkg, String formatString,
-			Boolean message) {
+	private String getStringSkin(String pkg, Boolean isMessage) {
+		String formatStringMessage = "Not compatible\nTemplate: %s\nYour device: %s";
+		String formatString = "Device: %s  (%s)\nAuthor: %s";
+
 		util.getSkinInfo(pkg);
 
-		return (message) ? String.format(formatString,
+		return (isMessage) ? String.format(formatStringMessage,
 				util.typeSkin(util.getType()), util.typeSkin(mydensiti))
 				: String.format(formatString, util.getSkinName(),
 						util.typeSkin(util.getType()), util.getAuthorName());
@@ -171,15 +168,14 @@ public class SkinChooser extends ListFragment {
 				else
 					pref.cPaketName(mSkinPackageName);
 
-				mSwitch.onSwitchContent(((MainActivity) mActivity).MAIN());
+				mSwitch.onSwitchContent(((Hello) getMainActivity()).MAIN());
 			} else {
-				new ToastAlert(mContext, mSkinMessage, false);
+				ToastAlert.create(getMainActivity(), mSkinMessage, false);
 			}
 		}
 
 		@Override
 		public void onCancel() {
-			// TODO Auto-generated method stub
 		}
 	};
 }

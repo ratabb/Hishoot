@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 //import dcsms.hishoot2b.MainActivity;
-import dcsms.hishoot2.MainActivity;
+import dcsms.hishoot2.Hello;
 import dcsms.hishoot2.R;
 
 public class MenuSliding extends ListFragment {
@@ -33,7 +33,7 @@ public class MenuSliding extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mActivity = (MainActivity) getActivity();
+		mActivity = (Hello) getActivity();
 		MenuAdapter adapter = new MenuAdapter(getActivity());
 
 		for (int i = 0; i < menus.length; i++) {

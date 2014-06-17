@@ -1,5 +1,6 @@
 package dcsms.hishoot2.fragment;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +23,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +32,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import dcsms.hishoot2.MainActivity;
+import dcsms.hishoot2.Hello;
 import dcsms.hishoot2.R;
 import dcsms.hishoot2.skinmanager.GetResources;
 
@@ -42,7 +44,7 @@ import dcsms.hishoot2.util.ShareDialog;
 
 import com.android.camera.CropImageIntentBuilder;
 
-public class Hello extends Fragment implements OnClickListener {
+public class HelloFragment extends Fragment implements OnClickListener {
 	protected static final boolean DEBUG = false;
 	protected final String TAG = getClass().getSimpleName();
 	private Activity mActivity;
@@ -74,7 +76,7 @@ public class Hello extends Fragment implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mActivity = (MainActivity) getActivity();
+		mActivity = (Hello) getActivity();
 		mContext = getActivity();
 		wallcrop = Uri.fromFile(new File(mContext.getExternalCacheDir(),
 				"wallcrop.jpg"));
@@ -322,10 +324,10 @@ public class Hello extends Fragment implements OnClickListener {
 			Bitmap wallfcuk = DrawView.resizeImage(bwall, maxwid, maxhi);
 
 			// TODO watermark with res, native code??
-			Bitmap wm = BitmapFactory.decodeResource(getResources(),
-					R.drawable.watermark);
-			// Bitmap wm = BitmapFactory.decodeStream(new ByteArrayInputStream(
-			// Base64.decode(dafuq(), Base64.DEFAULT)));
+			// Bitmap wm = BitmapFactory.decodeResource(getResources(),
+			// R.drawable.watermark);
+			Bitmap wm = BitmapFactory.decodeStream(new ByteArrayInputStream(
+					Base64.decode(getHello().dafuq(), Base64.DEFAULT)));
 
 			Canvas cc = new Canvas(mixthem);
 			cc.drawBitmap(wallfcuk, 0, 0, null);
@@ -337,8 +339,9 @@ public class Hello extends Fragment implements OnClickListener {
 			// TODO: coordinate dynamic? draw 'tanda air'
 			String il = pref.getPref().getString(About.ILLEGAL, "ILLEGAL");
 			Paint ler = paint(il);
-			int ils = il.length();
-			float le = (float) (cc.getWidth() - (float) (ils * 20));
+			// int ils = il.length();
+			// float le = (float) (cc.getWidth() - (float) (ils * 20));
+			float le = 40f;
 			float ga = (float) (cc.getHeight() - 20f);
 
 			cc.drawText(il, le, ga, ler);
@@ -348,10 +351,14 @@ public class Hello extends Fragment implements OnClickListener {
 		}
 	}
 
+	private Hello getHello() {
+		return (Hello) getActivity();
+	}
+
 	// TODO: 'tanda air'
 	private Paint paint(String s) {
 		Paint p = new Paint();
-		p.setTextAlign(Paint.Align.RIGHT);
+		p.setTextAlign(Paint.Align.LEFT);
 		p.setColor(0x55ffffff);
 		p.setShadowLayer(1f, 0f, .8f, 0x7f444444);
 		p.setTextSize(24f);
@@ -377,10 +384,7 @@ public class Hello extends Fragment implements OnClickListener {
 				if (DEBUG)
 					Log.d(TAG, s);
 				deleteCache(wallcrop);
-				//TODO
-//				ShareDialogDumb sf = new ShareDialogDumb();
-//				sf.setData(s);
-//				mSwitch.onSwitchContent(sf);
+
 				Intent i = new Intent();
 				i.putExtra("File", s);
 				i.setClass(mContext, ShareDialog.class);
@@ -418,7 +422,6 @@ public class Hello extends Fragment implements OnClickListener {
 		}
 
 	}
-
 
 	@Override
 	public void onClick(View v) {

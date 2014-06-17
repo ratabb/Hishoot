@@ -28,7 +28,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-
 import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
@@ -52,16 +51,114 @@ public class ShareDialog extends ActionBarActivity implements OnClickListener {
 	private GrupAraiadapter adapter;
 
 	String TAG = getClass().getSimpleName();
-	private Button fb, show, share;
+	private Button btnFbWall, btnFbGrup, btnShare;
 	private ImageView iv;
 	private ListView lv;
 	private String dirfile;
-	private Button lb;
+	private Button btnLogin;
 	Bitmap ok;
 	Grup a;
 
 	ProgressDialog pd;
 	private UiLifecycleHelper uiHelper;
+
+	private Session.StatusCallback callback = new Session.StatusCallback() {
+		@Override
+		public void call(Session session, SessionState state,
+				Exception exception) {
+			onSessionStateChange(session, state, exception);
+		}
+	};
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		setTheme(R.style.AppTheme);
+		super.onCreate(savedInstanceState);
+		uiHelper = new UiLifecycleHelper(this, callback);
+		uiHelper.onCreate(savedInstanceState);
+
+		setContentView(R.layout.sharedialog);
+		new SL(this, "Share It!!!", "Connect with facebook");
+		pd = new ProgressDialog(ShareDialog.this);
+		pd.setMessage("Processing... Please Wait");
+		pd.setCancelable(false);
+		pd.setIndeterminate(true);
+
+		Bundle exBundle = getIntent().getExtras();
+		dirfile = exBundle.getString("File");
+		btnFbWall = (Button) findViewById(R.id.share_fb);
+		btnLogin = (Button) findViewById(R.id.login);
+		btnShare = (Button) findViewById(R.id.share_apps);
+		btnFbGrup = (Button) findViewById(R.id.share_show);
+		iv = (ImageView) findViewById(R.id.hishoot_preview);
+		ok = BitmapFactory.decodeFile(dirfile);
+		lv = (ListView) findViewById(R.id.gruplist);
+		lv.setOnItemClickListener(itemclicklistviewgroups);
+
+		updateView();
+
+	}
+
+	private void updateView() {
+		final Session session = Session.getActiveSession();
+		if (session != null && (session.isOpened() || session.isClosed())) {
+			List<String> permissions = session.getPermissions();
+			if (!isSubsetOf(PERMISSIONS, permissions)) {
+				pendingPublishReauthorization = true;
+				Session.NewPermissionsRequest newPermissionsRequest = new Session.NewPermissionsRequest(
+						this, PERMISSIONS);
+				session.requestNewPublishPermissions(newPermissionsRequest);
+				return;
+			}
+			onSessionStateChange(session, session.getState(), null);
+		} else {
+			btnLogin.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View arg0) {
+					session.openForRead(new Session.OpenRequest(
+							ShareDialog.this).setCallback(callback));
+
+				}
+			});
+		}
+		iv.setImageBitmap(ok);
+		btnFbWall.setOnClickListener(this);
+		btnFbGrup.setOnClickListener(this);
+		btnShare.setOnClickListener(this);
+		// uiHelper.onResume();
+
+	}
+
+	private AdapterView.OnItemClickListener itemclicklistviewgroups = new OnItemClickListener() {
+
+		@Override
+		public void onItemClick(AdapterView<?> arg0, View v, int pos, long arg3) {
+			a = new Grup();
+			a = Group.get(pos);
+
+			final KomenDialog k = new KomenDialog(ShareDialog.this);
+			k.setListener(new Listener() {
+
+				@Override
+				public void onOK(String string) {
+					Bundle params = new Bundle();
+					params.putString("message", string);
+					params.putParcelable("picture", ok);
+					publishStory(params, "GRUPWALL", a.id);
+					lv.setVisibility(View.GONE);
+
+				}
+
+				@Override
+				public void onCancel() {
+
+				}
+			});
+			k.show();
+		}
+
+	};
 
 	@Override
 	public void onResume() {
@@ -94,128 +191,38 @@ public class ShareDialog extends ActionBarActivity implements OnClickListener {
 	}
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		setTheme(R.style.AppTheme);
-		super.onCreate(savedInstanceState);
-		uiHelper = new UiLifecycleHelper(this, callback);
-		uiHelper.onCreate(savedInstanceState);
-
-		setContentView(R.layout.sharedialog);
-		new SL(this, "Share It!!!","Connect with facebook");
-		pd = new ProgressDialog(ShareDialog.this);
-		pd.setMessage("Processing... Please Wait");
-		pd.setCancelable(false);
-		pd.setIndeterminate(true);
-
-		Bundle exBundle = getIntent().getExtras();
-		dirfile = exBundle.getString("File");
-		fb = (Button) findViewById(R.id.share_fb);
-		lb = (Button) findViewById(R.id.login);
-		share = (Button) findViewById(R.id.share_apps);
-		show = (Button) findViewById(R.id.share_show);
-		iv = (ImageView) findViewById(R.id.hishoot_preview);
-		ok = BitmapFactory.decodeFile(dirfile);
-		lv = (ListView) findViewById(R.id.gruplist);
-		lv.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View v, int pos,
-					long arg3) {
-				a = new Grup();
-				a = Group.get(pos);
-				final KomenDialog k = new KomenDialog(ShareDialog.this);
-				k.setListener(new Listener() {
-					
-					@Override
-					public void onOK(String string) {
-						Bundle params = new Bundle();
-						params.putString("message", string);
-						params.putParcelable("picture", ok);
-						publishStory(params, "GRUPWALL", a.id);
-						lv.setVisibility(View.GONE);
-						
-					}
-					
-					@Override
-					public void onCancel() {
-						
-						
-					}
-				});
-				k.show();
-				
-
-			}
-		});
-
-		updateView();
-
-	}
-
-	private void updateView() {
-		final Session session = Session.getActiveSession();
-		if (session != null && (session.isOpened() || session.isClosed())) {
-			List<String> permissions = session.getPermissions();
-			if (!isSubsetOf(PERMISSIONS, permissions)) {
-				pendingPublishReauthorization = true;
-				Session.NewPermissionsRequest newPermissionsRequest = new Session.NewPermissionsRequest(
-						this, PERMISSIONS);
-				session.requestNewPublishPermissions(newPermissionsRequest);
-				return;
-			}
-			onSessionStateChange(session, session.getState(), null);
-		} else {
-			lb.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View arg0) {
-					session.openForRead(new Session.OpenRequest(
-							ShareDialog.this).setCallback(callback));
-
-				}
-			});
-		}
-		iv.setImageBitmap(ok);
-		fb.setOnClickListener(this);
-		show.setOnClickListener(this);
-		share.setOnClickListener(this);
-		// uiHelper.onResume();
-
-	}
-
-	@Override
-	public void onClick(View arg0) {
+	public void onClick(View v) {
 		Session session = Session.getActiveSession();
-		if(arg0.getId()==R.id.share_apps){
+		int idButton = v.getId();
+		if (idButton == R.id.share_apps) {
 			Intent i = new Intent(Intent.ACTION_SEND);
 			i.setType("image/*");
 			i.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(dirfile)));
 			startActivity(Intent.createChooser(i, "Share with : "));
 		}
 		if (session != null && (session.isOpened() || session.isClosed())) {
-			switch (arg0.getId()) {
+			switch (idButton) {
 			case R.id.share_fb:
-				
+
 				final KomenDialog k = new KomenDialog(ShareDialog.this);
 				k.setListener(new Listener() {
-					
+
 					@Override
 					public void onOK(String string) {
-						
+
 						Bundle p = new Bundle();
 						p.putString("message", string);
 						p.putParcelable("picture", ok);
 						publishStory(p, "WALL", null);
-						
+
 					}
-					
+
 					@Override
 					public void onCancel() {
-						
+
 					}
 				});
 				k.show();
-				
 
 				break;
 			case R.id.share_show:
@@ -231,15 +238,6 @@ public class ShareDialog extends ActionBarActivity implements OnClickListener {
 
 	}
 
-	private Session.StatusCallback callback = new Session.StatusCallback() {
-		@Override
-		public void call(Session session, SessionState state,
-				Exception exception) {
-			onSessionStateChange(session, state, exception);
-		}
-	};
-	
-
 	private void onSessionStateChange(Session session, SessionState state,
 			Exception exception) {
 		if (pendingPublishReauthorization
@@ -248,10 +246,10 @@ public class ShareDialog extends ActionBarActivity implements OnClickListener {
 		}
 		if (state.isOpened()) {
 			Log.i(TAG, "Logged in...");
-			lb.setVisibility(View.GONE);
+			btnLogin.setVisibility(View.GONE);
 		} else if (state.isClosed()) {
 			Log.i(TAG, "Logged out...");
-			lb.setVisibility(View.VISIBLE);
+			btnLogin.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -268,7 +266,6 @@ public class ShareDialog extends ActionBarActivity implements OnClickListener {
 	private void publishStory(Bundle post, String type, String grupid) {
 		Session session = Session.getActiveSession();
 		if (session != null) {
-
 
 			// Check for publish permissions
 			List<String> permissions = session.getPermissions();
@@ -344,6 +341,7 @@ public class ShareDialog extends ActionBarActivity implements OnClickListener {
 			pd.dismiss();
 			JSONObject graphResponse = response.getGraphObject()
 					.getInnerJSONObject();
+			@SuppressWarnings("unused")
 			String postId = null;
 			try {
 				postId = graphResponse.getString("id");
@@ -357,7 +355,7 @@ public class ShareDialog extends ActionBarActivity implements OnClickListener {
 			} else {
 				Toast.makeText(ShareDialog.this, "Success", Toast.LENGTH_LONG)
 						.show();
-				
+
 			}
 		}
 
@@ -391,7 +389,7 @@ public class ShareDialog extends ActionBarActivity implements OnClickListener {
 
 					@Override
 					public void run() {
-						// TODO Auto-generated method stub
+
 						adapter = new GrupAraiadapter(ShareDialog.this,
 								R.layout.rowlayout, Group);
 						lv.setVisibility(View.VISIBLE);
@@ -400,7 +398,6 @@ public class ShareDialog extends ActionBarActivity implements OnClickListener {
 					}
 				});
 			} catch (JSONException e) {
-
 				e.printStackTrace();
 			}
 		}
